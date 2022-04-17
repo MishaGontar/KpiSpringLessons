@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>List of Queue</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container text-center">
+    <div>
+        <h1>List of Queue</h1>
+    </div>
+    <div>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th>Queue Name</th>
+                <th>Owner</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="queue: ${queueList}"
+                th:attr="onclick=|window.location.href =`@{'/queue/' + ${queue.getId()}}`|">
+                <td th:text="${queue.name}">Queue name</td>
+                <td th:text="${queue.owner.fullName()}">Owner</td>
+
+                <td th:if="${queue.isActive()== true}">
+                    <button type="submit" class="btn btn-success">Check out</button>
+                </td>
+
+                <td th:if="${queue.isActive()!= true}">
+                    <button type="button" class="btn btn-danger" onclick="alert(`Sorry but Queue close!`)">Closed
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title th:text="'Queue ' + ${name}"></title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container text-center">
+    <div>
+        <h1 th:text="${isOwner}
+        ?'Hello ' + ${user.fullName()} + ' to your queue'+ ${queue.getName()}
+        :'This is Queue '+ ${queue.getName()} "></h1>
+    </div>
+    <div th:unless="${isOwner}">
+        <button th:attr="onclick=|window.location.href =`@{'/queue/add/'+${queue.getId()}}`|">Stand In</button>
+        <button th:attr="onclick=|window.location.href =`@{'/queue/add/'+${queue.getId()}}`|">Stand Out</button>
+    </div>
+    <div>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th>Full Name</th>
+                <th th:if="${isOwner}">Delete user</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user: ${userList}">
+                <td th:text="${user.fullName()}">User Name</td>
+                <td th:if="${isOwner}">
+                    <button type="button" class="btn btn-danger"
+                            th:attr="onclick=|window.location.href =`@{'/queue/delete/'+${queue.getId()}+'&' + ${user.getId()}}`|">
+                        Delete user
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
