@@ -1,13 +1,15 @@
 package com.example.kpilesson.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @Table(name = "users")
 public class User {
     @Id

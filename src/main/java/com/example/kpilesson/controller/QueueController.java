@@ -4,7 +4,6 @@ import com.example.kpilesson.model.Queue;
 import com.example.kpilesson.model.QueueEntity;
 import com.example.kpilesson.model.User;
 import com.example.kpilesson.repository.QueueEntityRepository;
-import com.example.kpilesson.repository.QueueRepository;
 import com.example.kpilesson.repository.UserRepository;
 import com.example.kpilesson.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.util.List;
 
 @Controller
@@ -46,24 +46,26 @@ public class QueueController {
     @GetMapping(value = "/list")
     public String getAllQueue(Model model) {
         List<QueueEntity> queueList = queueEntityRepository.findAll();
-
         model.addAttribute("queueList", queueList);
         return "listQueue";
     }
 
     @GetMapping(value = "/{idQueue}")
     public String getQueueById(@PathVariable long idQueue, Model model, Principal principal) {
+        System.out.println("Start getQueueById {}");
+
         QueueEntity queue = queueEntityRepository.findById(idQueue).get();
         if (!queue.isActive()) return "redirect:/queue/list";
-        System.out.println("BEFORE");
         List<User> usersList = queueRepository.findByQueueEntityId(idQueue);
+        usersList.forEach(System.out::println);
         User currentUser = userRepository.findByUsername(principal.getName());
-        System.out.println("LIST size : " + usersList.size());
 
         model.addAttribute("user", currentUser);
         model.addAttribute("queue", queue);
         model.addAttribute("isOwner", queue.isOwnerByUser(currentUser));
         model.addAttribute("userList", usersList);
+
+        System.out.println("End getQueueById {}");
         return "Queue";
     }
 
@@ -71,30 +73,29 @@ public class QueueController {
     public String getQueueById(@PathVariable long idQueue, Principal principal) {
         QueueEntity currentQueue = queueEntityRepository.findById(idQueue).get();
         User currentUser = userRepository.findByUsername(principal.getName());
-        User userInQueue = queueRepository.findFirstByUserIdAndQueueEntityId(getUserIdByPrincipal(principal), idQueue);
+        User userInQueue = queueRepository.findByUserIdAndQueueEntityId(getUserIdByPrincipal(principal), idQueue);
         if (!currentQueue.isActive() || userInQueue != null) return "redirect:/queue/list";
 
         Queue newQueue = new Queue();
         newQueue.setQueueEntity(currentQueue);
         newQueue.setUser(currentUser);
         queueRepository.save(newQueue);
-        return "redirect:/queue/" + idQueue;
+        return String.format("redirect:/queue/%s", idQueue);
     }
 
     @GetMapping(value = "/delete/{idQueue}&{idUser}")
     public String deleteUserFromQueueById(@PathVariable long idQueue, @PathVariable long idUser) {
-        QueueEntity queue = queueEntityRepository.findById(idQueue).get();
-        queueRepository.deleteQueueByUserIdAndQueueEntityId(idQueue, idUser);
-        return "redirect:/queue/" + idQueue;
+        queueRepository.deleteUserByUserIdAndQueueEntityId(idQueue, idUser);
+        return String.format("redirect:/queue/%s", idQueue);
     }
 
     @GetMapping(value = "/delete/{idQueue}")
     public String deleteUserFromQueueById(@PathVariable long idQueue, Principal principal) {
         QueueEntity currentQueue = queueEntityRepository.findById(idQueue).get();
-        User userInQueue = queueRepository.findFirstByUserIdAndQueueEntityId(getUserIdByPrincipal(principal), idQueue);
+        User userInQueue = queueRepository.findByUserIdAndQueueEntityId(getUserIdByPrincipal(principal), idQueue);
         if (!currentQueue.isActive() || userInQueue == null) return "redirect:/queue/list";
-        queueRepository.deleteQueueByUserIdAndQueueEntityId(idQueue, getUserIdByPrincipal(principal));
-        return "redirect:/queue/" + idQueue;
+        queueRepository.deleteUserByUserIdAndQueueEntityId(idQueue, getUserIdByPrincipal(principal));
+        return String.format("redirect:/queue/%s", idQueue);
     }
 
     private long getUserIdByPrincipal(Principal principal) {

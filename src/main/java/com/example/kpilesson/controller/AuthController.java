@@ -20,6 +20,7 @@ public class AuthController {
     public String viewHomePage() {
         return "index";
     }
+
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
@@ -36,6 +37,7 @@ public class AuthController {
 
         return "register_success";
     }
+
     @GetMapping("/users")
     public String listUsers(Model model) {
         List<User> listUsers = userRepo.findAll();
