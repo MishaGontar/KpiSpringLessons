@@ -6,17 +6,20 @@ import com.example.kpilesson.repository.QueueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Component
+@Service
+@Transactional
 public class QueueServiceImpl implements QueueService {
     @Autowired
     private QueueRepository queueRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
 
     @Override
     public List<User> findByQueueEntityId(long id) {
