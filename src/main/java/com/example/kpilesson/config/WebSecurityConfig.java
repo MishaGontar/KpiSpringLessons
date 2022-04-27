@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private String[] listAllowURLs = {"/", "/register", "/process_register", "/css/**", "/js/**", "/webjars/**"};
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -42,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/register", "/process_register", "/css/**", "/js/**", "/webjars/**").permitAll()
+                .antMatchers(listAllowURLs).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
