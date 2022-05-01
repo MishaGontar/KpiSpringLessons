@@ -1,7 +1,7 @@
 package com.example.kpilesson.service;
 
 import com.example.kpilesson.model.CustomUserDetails;
-import com.example.kpilesson.model.User;
+import com.example.kpilesson.model.UserEntity;
 import com.example.kpilesson.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,11 +15,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByUsername(username);
-        if (user == null) {
+        UserEntity userEntity = userRepo.findByUsername(username);
+        if (userEntity == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(userEntity);
     }
 
 }

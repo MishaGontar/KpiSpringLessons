@@ -24,13 +24,13 @@ public class QueueEntity {
     private boolean isActive = true;
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private User owner;
+    private UserEntity owner;
 
     public boolean isOwnerById(long id) {
         return id == owner.getId();
     }
 
-    public boolean isOwnerByUser(User user) {
-        return user.equals(owner);
+    public boolean isOwnerByUser(UserEntity userEntity) {
+        return userEntity.equals(owner);
     }
 }

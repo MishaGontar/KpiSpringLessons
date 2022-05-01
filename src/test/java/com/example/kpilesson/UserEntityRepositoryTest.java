@@ -1,6 +1,6 @@
 package com.example.kpilesson;
 
-import com.example.kpilesson.model.User;
+import com.example.kpilesson.model.UserEntity;
 import com.example.kpilesson.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback(false)
-class UserRepositoryTest {
+class UserEntityRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -23,11 +23,11 @@ class UserRepositoryTest {
 
     @Test
     public void testCreateUser() {
-        User user = new User();
+        UserEntity userEntity = new UserEntity();
 
-        User savedUser = repo.save(user);
+        UserEntity savedUserEntity = repo.save(userEntity);
 
-        User existUser = entityManager.find(User.class, savedUser.getId());
+        UserEntity existUserEntity = entityManager.find(UserEntity.class, savedUserEntity.getId());
 
 
     }

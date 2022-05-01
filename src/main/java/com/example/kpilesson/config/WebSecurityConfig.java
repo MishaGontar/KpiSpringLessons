@@ -3,6 +3,7 @@ package com.example.kpilesson.config;
 import com.example.kpilesson.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,11 +18,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String[] listAllowURLs = {"/", "/register", "/process_register", "/css/**", "/js/**", "/webjars/**"};
 
     @Bean
+    @Scope("singleton")
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
     }
 
     @Bean
+    @Scope("prototype")
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }

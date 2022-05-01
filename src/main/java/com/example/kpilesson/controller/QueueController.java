@@ -1,8 +1,8 @@
 package com.example.kpilesson.controller;
 
-import com.example.kpilesson.model.Queue;
 import com.example.kpilesson.model.QueueEntity;
 import com.example.kpilesson.model.User;
+import com.example.kpilesson.model.UserEntity;
 import com.example.kpilesson.repository.QueueEntityRepository;
 import com.example.kpilesson.repository.UserRepository;
 import com.example.kpilesson.service.QueueService;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
-import java.text.MessageFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/queue")
@@ -39,7 +39,6 @@ public class QueueController {
     public String createQueue(QueueEntity queue, Principal principal) {
         queue.setOwner(userRepository.findByUsername(principal.getName()));
         queueEntityRepository.save(queue);
-
         return "redirect:/main";
     }
 
@@ -55,51 +54,19 @@ public class QueueController {
         System.out.println("Start getQueueById {}");
 
         QueueEntity queue = queueEntityRepository.findById(idQueue).get();
-        if (!queue.isActive()) return "redirect:/queue/list";
-        List<User> usersList = queueRepository.findByQueueEntityId(idQueue);
-        usersList.forEach(System.out::println);
-        User currentUser = userRepository.findByUsername(principal.getName());
 
-        model.addAttribute("user", currentUser);
+        List<UserEntity> usersList = queueRepository.findByQueueEntityId(idQueue);
+        List<User> users = usersList.stream().map(User::new).collect(Collectors.toList());
+        users.forEach(System.out::println);
+        UserEntity currentUserEntity = userRepository.findByUsername(principal.getName());
+
+        model.addAttribute("user", new User(currentUserEntity));
         model.addAttribute("queue", queue);
-        model.addAttribute("isOwner", queue.isOwnerByUser(currentUser));
-        model.addAttribute("userList", usersList);
+        model.addAttribute("isOwner", queue.isOwnerByUser(currentUserEntity));
+        model.addAttribute("userList", users);
 
         System.out.println("End getQueueById {}");
         return "Queue";
-    }
-
-    @GetMapping(value = "/add/{idQueue}")
-    public String getQueueById(@PathVariable long idQueue, Principal principal) {
-        QueueEntity currentQueue = queueEntityRepository.findById(idQueue).get();
-        User currentUser = userRepository.findByUsername(principal.getName());
-        User userInQueue = queueRepository.findByUserIdAndQueueEntityId(getUserIdByPrincipal(principal), idQueue);
-        if (!currentQueue.isActive() || userInQueue != null) return "redirect:/queue/list";
-
-        Queue newQueue = new Queue();
-        newQueue.setQueueEntity(currentQueue);
-        newQueue.setUser(currentUser);
-        queueRepository.save(newQueue);
-        return String.format("redirect:/queue/%s", idQueue);
-    }
-
-    @GetMapping(value = "/delete/{idQueue}&{idUser}")
-    public String deleteUserFromQueueById(@PathVariable long idQueue, @PathVariable long idUser) {
-        queueRepository.deleteUserByUserIdAndQueueEntityId(idQueue, idUser);
-        return String.format("redirect:/queue/%s", idQueue);
-    }
-
-    @GetMapping(value = "/delete/{idQueue}")
-    public String deleteUserFromQueueById(@PathVariable long idQueue, Principal principal) {
-        QueueEntity currentQueue = queueEntityRepository.findById(idQueue).get();
-        User userInQueue = queueRepository.findByUserIdAndQueueEntityId(getUserIdByPrincipal(principal), idQueue);
-        if (!currentQueue.isActive() || userInQueue == null) return "redirect:/queue/list";
-        queueRepository.deleteUserByUserIdAndQueueEntityId(idQueue, getUserIdByPrincipal(principal));
-        return String.format("redirect:/queue/%s", idQueue);
-    }
-
-    private long getUserIdByPrincipal(Principal principal) {
-        return userRepository.findByUsername(principal.getName()).getId();
     }
 }
 

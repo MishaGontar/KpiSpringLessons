@@ -7,10 +7,10 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private UserEntity userEntity;
 
-    public CustomUserDetails(User user) {
-        this.user = user;
+    public CustomUserDetails(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
     @Override
@@ -20,12 +20,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return userEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return userEntity.getUsername();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getFullName() {
-        return user.getFirstName() + " " + user.getLastName();
+        return userEntity.getFirstName() + " " + userEntity.getLastName();
     }
 
 }

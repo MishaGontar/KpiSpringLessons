@@ -23,7 +23,7 @@
             </thead>
             <tbody>
             <tr th:each="queue: ${queueList}"
-                th:attr="onclick=|window.location.href =`@{'/queue/' + ${queue.getId()}}`|">
+                th:attr="onclick=|window.location.href =`@{'/queue/' + ${queue.id}}`|">
                 <td th:text="${queue.name}">Queue name</td>
                 <td th:text="${queue.owner.fullName()}">Owner</td>
 
